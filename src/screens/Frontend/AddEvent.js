@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   StyleSheet,
+  Modal,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -18,12 +19,17 @@ export default function AddEvent() {
     eventDate: "",
     location: "",
     description: "",
+    category: "", // Added category field
   };
 
   const [eventData, setEventData] = useState(initialState);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  // Predefined categories
+  const categories = ["Music", "Tech", "Sports", "Art", "Business"];
 
   function getId() {
     const timestamp = Date.now();
@@ -34,7 +40,7 @@ export default function AddEvent() {
   const handleSubmit = async () => {
     if (isProcessing) return;
 
-    const { eventName, eventDate, location, description } = eventData;
+    const { eventName, eventDate, location, description, category } = eventData;
 
     if (!eventName.trim() || eventName.length < 3) {
       ToastAndroid.show("Please enter a valid event name.", ToastAndroid.SHORT);
@@ -46,11 +52,17 @@ export default function AddEvent() {
       return;
     }
 
+    if (!category) {
+      ToastAndroid.show("Please select a category.", ToastAndroid.SHORT);
+      return;
+    }
+
     const formData = {
       eventName: eventName.trim(),
       eventDate,
       location,
       description,
+      category,
       dateCreated: serverTimestamp(),
       id: getId(),
     };
@@ -78,6 +90,11 @@ export default function AddEvent() {
     }
   };
 
+  const handleCategorySelect = (category) => {
+    setEventData((prev) => ({ ...prev, category }));
+    setIsCategoryModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add New Event</Text>
@@ -92,6 +109,18 @@ export default function AddEvent() {
             setEventData((prev) => ({ ...prev, eventName: text }))
           }
         />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Category</Text>
+        <TouchableOpacity
+          style={[styles.input, styles.categoryInput]}
+          onPress={() => setIsCategoryModalVisible(true)}
+        >
+          <Text style={[styles.categoryText, eventData.category && styles.selectedText]}>
+            {eventData.category || "Select category"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.inputContainer}>
@@ -149,6 +178,34 @@ export default function AddEvent() {
           {isProcessing ? "Adding..." : "Add Event"}
         </Text>
       </TouchableOpacity>
+
+      {/* Category Selection Modal */}
+      <Modal
+        visible={isCategoryModalVisible}
+        transparent={true}
+        animationType="slide"
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Category</Text>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                style={styles.categoryOption}
+                onPress={() => handleCategorySelect(category)}
+              >
+                <Text style={styles.categoryOptionText}>{category}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setIsCategoryModalVisible(false)}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -183,8 +240,17 @@ const styles = StyleSheet.create({
   dateInput: {
     justifyContent: "center",
   },
+  categoryInput: {
+    justifyContent: "center",
+  },
   dateText: {
     color: "#666",
+  },
+  categoryText: {
+    color: "#666",
+  },
+  selectedText: {
+    color: "#333",
   },
   textArea: {
     height: 100,
@@ -202,8 +268,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  categoryOption: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  categoryOptionText: {
+    fontSize: 16,
+    color: "#007AFF",
+    textAlign: "center",
+  },
+  cancelButton: {
+    marginTop: 15,
+    paddingVertical: 15,
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    color: "#FF3B30",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
 });
-
-
-
-

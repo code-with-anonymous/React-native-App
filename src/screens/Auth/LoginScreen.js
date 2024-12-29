@@ -20,7 +20,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://192.168.100.226:5001/api/login', {
+      const response = await axios.post('http://192.168.100.11:5001/api/login', {
         email,
         password,
       });

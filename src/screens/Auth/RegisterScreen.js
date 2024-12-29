@@ -33,7 +33,7 @@ const RegisterScreen = ({ navigation }) => {
     setLoading(true);
     try {
       // Send the registration data to the backend (MongoDB)
-      const response = await axios.post('http://192.168.100.226:5001/api/register', {
+      const response = await axios.post('http://192.168.100.11:5001/api/register', {
         email,
         password,
         role,

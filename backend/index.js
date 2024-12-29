@@ -13,7 +13,7 @@ app.use(express.json());
 // CORS configuration to allow the frontend from multiple origins
 app.use(cors({
     origin: [
-        "http://172.16.50.183:5001",  // Your mobile device IP address (if using mobile)
+        "http://192.168.100.11:5001",  // Your mobile device IP address (if using mobile)
         "http://localhost:5001",       // For local frontend testing
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
