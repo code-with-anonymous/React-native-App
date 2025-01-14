@@ -1,131 +1,354 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, FlatList, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+// import React, { useEffect, useState } from 'react';
+// import {
+//   StyleSheet,
+//   View,
+//   Text,
+//   ImageBackground,
+//   TouchableOpacity,
+//   SafeAreaView,
+//   Dimensions,
+// } from 'react-native';
+// const LandingPage = ({ navigation }) => {
 
-const { width, height } = Dimensions.get('window'); // Get screen width and height
+//   // user authentication
 
-const ExploreMoreScreen = () => {
-  const navigation = useNavigation();
+//   const getToken = async () => {
+//     try {
+//       const token = await AsyncStorage.getItem('authToken');
+//       return token;
+//     } catch (error) {
+//       console.error('Error retrieving token:', error);
+//       return null;
+//     }
+//   };
 
-  // Sample data for the carousel (images and titles)
-  const carouselItems = [
-    { id: '1', title: 'Crave Curve', image: 'https://img.freepik.com/premium-photo/burger-with-flame-background-words-burger-it_824239-1.jpg?ga=GA1.1.1642102062.1730407199&semt=ais_hybrid' },
-    { id: '2', title: 'Best Deals For You', image: 'https://img.freepik.com/premium-photo/chocolate-cake-with-with-berries_127425-304.jpg?ga=GA1.1.1642102062.1730407199&semt=ais_hybrid' },
-    { id: '3', title: 'Discover New Collections', image: 'https://img.freepik.com/free-photo/delicious-fries-studio_23-2151846534.jpg?ga=GA1.1.1642102062.1730407199&semt=ais_hybrid' },
-  ];
+//   const verifyToken = async (token) => {
+//     try {
+//       const response = await apiClient.post('/api/verify-token', { token });
+//       return response.data.isValid; // Assume the server responds with { isValid: true/false }
+//     } catch (error) {
+//       console.error('Token verification failed:', error);
+//       return false;
+//     }
+//   };
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Render carousel item
-  const renderItem = ({ item }) => (
-    <View style={styles.carouselItem}>
-      <Image source={{ uri: item.image }} style={styles.carouselImage} />
-      {/* Conditional styling for the first item */}
-      {item.id === '1' ? (
-        <View style={styles.textOverlay}>
-          <Text style={styles.elegantText}>Crave Curve</Text>
-        </View>
-      ) : (
-        <View style={styles.textOverlay}>
-          <Text style={styles.carouselTitle}>{item.title}</Text>
-        </View>
-      )}
-    </View>
-  );
+//   useEffect(() => {
+//     const checkAuth = async () => {
+//       const token = await getToken();
+//       if (token) {
+//         const isValid = await verifyToken(token);
+//         if (isValid) {
+//           setIsLoggedIn(true);
+//         } else {
+//           navigation.navigate('/login'); // Redirect to login if token is invalid
+//         }
+//       } else {
+//         navigation.navigate('/login'); // Redirect to login if no token is found
+//       }
+//     };
 
-  // Navigate to the Register Screen
-  const handleExploreMore = () => {
-    navigation.navigate('RegisterScreen'); // Navigate to Register Screen
+//     checkAuth();
+//   }, [navigate]);
+
+//   const handleNavigation = (route) => {
+//     // Navigation function to be implemented based on your navigation setup
+//     console.log(`Navigating to: ${route}`);
+//     navigation.navigate(route);
+//   };
+
+//   return (
+//     <ImageBackground
+//       source={{ uri: 'https://images.pexels.com/photos/1472673/pexels-photo-1472673.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }} // Replace with your actual image
+//       style={styles.backgroundImage}
+//     >
+//       <View style={styles.overlay}>
+//         <SafeAreaView style={styles.container}>
+//           {/* Header Section */}
+//           <View style={styles.headerContainer}>
+//             <Text style={styles.title}>Event Hub</Text>
+//             <Text style={styles.subtitle}>
+//               Your complete event management solution
+//             </Text>
+//           </View>
+
+//           {/* Buttons Section */}
+//           <View style={styles.buttonContainer}>
+//             <TouchableOpacity
+//               style={styles.button}
+//               onPress={() => handleNavigation('AddEvent')}
+//             >
+//               <Text style={styles.buttonTitle}>Create Event</Text>
+//               <Text style={styles.buttonSubtext}>Start planning your next event</Text>
+//             </TouchableOpacity>
+
+//             <TouchableOpacity
+//               style={styles.button}
+//               onPress={() => handleNavigation('GetEvent')}
+//             >
+//               <Text style={styles.buttonTitle}>Manage Events</Text>
+//               <Text style={styles.buttonSubtext}>Control your existing events</Text>
+//             </TouchableOpacity>
+
+//             <TouchableOpacity
+//               style={styles.button}
+//               onPress={() => handleNavigation('ExploreEvents')}
+//             >
+//               <Text style={styles.buttonTitle}>Explore Events</Text>
+//               <Text style={styles.buttonSubtext}>Discover amazing events</Text>
+//             </TouchableOpacity>
+//           </View>
+//         </SafeAreaView>
+//       </View>
+//     </ImageBackground>
+//   );
+// };
+
+// const { width } = Dimensions.get('window');
+
+// const styles = StyleSheet.create({
+//   backgroundImage: {
+//     flex: 1,
+//     width: '100%',
+//     height: '100%',
+//   },
+//   overlay: {
+//     flex: 1,
+//     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark overlay for better text visibility
+//   },
+//   container: {
+//     flex: 1,
+//     paddingHorizontal: 20,
+//     justifyContent: 'center',
+//   },
+//   headerContainer: {
+//     alignItems: 'center',
+//     marginBottom: 60,
+//   },
+//   title: {
+//     fontSize: 36,
+//     fontWeight: 'bold',
+//     color: '#FFFFFF',
+//     marginBottom: 10,
+//     textAlign: 'center',
+//   },
+//   subtitle: {
+//     fontSize: 18,
+//     color: '#FFFFFF',
+//     textAlign: 'center',
+//     opacity: 0.9,
+//   },
+//   buttonContainer: {
+//     gap: 20,
+//   },
+//   button: {
+//     backgroundColor: '#FFFFFF',
+//     borderRadius: 15,
+//     padding: 20,
+//     alignItems: 'center',
+//     shadowColor: '#000',
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//   },
+//   buttonTitle: {
+//     fontSize: 20,
+//     fontWeight: '600',
+//     color: '#333333',
+//     marginBottom: 5,
+//   },
+//   buttonSubtext: {
+//     fontSize: 14,
+//     color: '#666666',
+//     textAlign: 'center',
+//   },
+// });
+
+// export default LandingPage;
+
+
+
+
+import React, { useEffect, useState } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ImageBackground,
+  TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import axios from 'axios';
+
+const LandingPage = ({ navigation }) => {
+  // user authentication
+
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      return token;
+    } catch (error) {
+      console.error('Error retrieving token:', error);
+      return null;
+    }
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Fullscreen Carousel */}
-      <FlatList
-        data={carouselItems}
-        renderItem={renderItem}
-        horizontal
-        keyExtractor={(item) => item.id}
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled // Snap to each full screen carousel item
-      />
+  const verifyToken = async (token) => {
+    try {
+      const response = await axios.post('http://192.168.100.4:5001/api/verify-token', { token });
+      return response.data.isValid; // Assume the server responds with { isValid: true/false }
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return false;
+    }
+  };
 
-      {/* Explore More Button */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleExploreMore}>
-          <Text style={styles.buttonText}>Explore More</Text>
-        </TouchableOpacity>
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await getToken();
+      if (token) {
+        const isValid = await verifyToken(token);
+        console.log(isValid)
+        if (isValid) {
+          setIsLoggedIn(true);
+          navigation.navigate('ExploreMore')
+          // console.log("User is logged in", isLoggedIn);
+        } else {
+          navigation.navigate('LoginScreen'); // Use 'Login' without slash for navigation
+        }
+      } else {
+        navigation.navigate('LoginScreen'); // Use 'Login' without slash for navigation
+      }
+    };
+    
+    checkAuth();
+    console.log(isLoggedIn)
+  }, [navigation]); // Corrected dependency to 'navigation'
+
+  const handleNavigation = (route) => {
+    // Navigation function to be implemented based on your navigation setup
+    console.log(`Navigating to: ${route}`);
+    navigation.navigate(route);
+  };
+  console.log(isLoggedIn)
+
+  return (
+    <ImageBackground
+      source={{ uri: 'https://images.pexels.com/photos/1472673/pexels-photo-1472673.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }} // Replace with your actual image
+      style={styles.backgroundImage}
+    >
+      <View style={styles.overlay}>
+        <SafeAreaView style={styles.container}>
+          {/* Header Section */}
+          <View style={styles.headerContainer}>
+            <Text style={styles.title}>Event Hub</Text>
+            <Text style={styles.subtitle}>
+              Your complete event management solution
+            </Text>
+          </View>
+
+          {/* Buttons Section */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handleNavigation('AddEvent')}
+            >
+              <Text style={styles.buttonTitle}>Create Event</Text>
+              <Text style={styles.buttonSubtext}>Start planning your next event</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handleNavigation('GetEvent')}
+            >
+              <Text style={styles.buttonTitle}>Manage Events</Text>
+              <Text style={styles.buttonSubtext}>Control your existing events</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => handleNavigation('ExploreEvents')}
+            >
+              <Text style={styles.buttonTitle}>Explore Events</Text>
+              <Text style={styles.buttonSubtext}>Discover amazing events</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    backgroundColor: '#111', // Black background
-  },
-  carouselItem: {
-    width: width, // Fullscreen width
-    height: height, // Fullscreen height
-    position: 'relative',
-  },
-  carouselImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover', // Cover entire screen
   },
-  textOverlay: {
-    position: 'absolute',
-    top: '50%', // Center vertically
-    left: 0,
-    right: 0,
-    transform: [{ translateY: -30 }], // Offset for perfect centering
-    backgroundColor: 'rgba(7, 7, 7, 0.8)', // Semi-transparent black overlay
-    paddingVertical: 20,
-    paddingHorizontal: 30,
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark overlay for better text visibility
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+  },
+  headerContainer: {
     alignItems: 'center',
+    marginBottom: 60,
   },
-  elegantText: {
-    fontSize: 50,
+  title: {
+    fontSize: 36,
     fontWeight: 'bold',
-    fontStyle: 'italic',
-    color: '#FFD700', // Gold color for elegance
+    color: '#FFFFFF',
+    marginBottom: 10,
     textAlign: 'center',
-    textShadowColor: '#000', // Subtle shadow for depth
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 45,
-    letterSpacing: 2, // Elegant spacing
   },
-  carouselTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff', // White text
+  subtitle: {
+    fontSize: 18,
+    color: '#FFFFFF',
     textAlign: 'center',
+    opacity: 0.9,
   },
   buttonContainer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
+    gap: 20,
   },
   button: {
-    backgroundColor: '#FFD700',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-    elevation: 78, // Shadow for Android
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    padding: 20,
+    alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 56 },
-    shadowOpacity: 0.9,
-    shadowRadius: 55,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  buttonText: {
-    color: '#000',
-    fontSize: 18,
-    fontWeight: 'bold',
+  buttonTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 5,
+  },
+  buttonSubtext: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
   },
 });
 
-export default ExploreMoreScreen;
-
-
+export default LandingPage;

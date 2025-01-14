@@ -1,43 +1,4 @@
-// Frontend Login Handler
-const handleLogin = async (values) => {
-    const { email, password } = values;
-    setLoading(true);
-    
-    try {
-      const response = await axios.post('http://192.168.100.16:5000/api/login', { 
-        email, 
-        password 
-      });
-  
-      // Extract token and user data
-      const { token, user } = response.data;
-      const { role } = user;
-  
-      // Store the token
-      await AsyncStorage.setItem('authToken', token);
-  
-      // Navigate based on role
-      if (role === 'manager') {
-        await navigation.navigate('ManagerDashboard');
-        Alert.alert('Login Successful', 'Welcome Manager!');
-      } else if (role === 'customer') {
-        await navigation.navigate('CustomerDashboard');
-        Alert.alert('Login Successful', 'Welcome Customer!');
-      } else {
-        Alert.alert('Error', 'User role not recognized.');
-      }
-  
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                          'Login failed. Please try again.';
-      console.error('Login error:', errorMessage);
-      Alert.alert('Login Failed', errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  // Backend Authentication Controller
+// Backend Authentication Controller
   const userModel = require("../models/User.js");
   const bcrypt = require("bcrypt");
   const jwt = require('jsonwebtoken');
@@ -113,7 +74,7 @@ const handleLogin = async (values) => {
           role: registeredUser.role 
         },
         process.env.JWT_SECRET,
-        { expiresIn: '3d' }
+        { expiresIn: '1h' }
       );
   
       console.log('token', token);
@@ -145,6 +106,22 @@ const handleLogin = async (values) => {
       });
     }
   };
+
+  const verifyToken = async (req, res) => {
+    const { token } = req.body;
+    console.log(token)
+  
+    if (!token) {
+      return res.status(400).json({ isValid: false, message: 'No token provided' });
+    }
+  
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ isValid: false, message: 'Invalid token' });
+      }
+      res.json({ isValid: true, user: decoded });
+    });
+  };
   
   // Middleware for authentication
   const authenticate = (req, res, next) => {
@@ -174,4 +151,4 @@ const handleLogin = async (values) => {
     };
   };
   
-  module.exports = { register, login, authenticate, authorizeRole };
+  module.exports = { register, login, authenticate, authorizeRole , verifyToken};

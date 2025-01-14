@@ -4,7 +4,7 @@ const connectDB = async () => {
   try {
     // Replace <db_password> with your actual MongoDB password
     const conn = await mongoose.connect(
-      "mongodb+srv://muteebramzan2:rayyan@cluster0.m6jh1.mongodb.net/user",
+      process.env.MONGO_URL,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
