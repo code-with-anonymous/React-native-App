@@ -5,7 +5,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginScreen = ({ navigation }) => {
+
+const LoginScreen = ({ navigation, setIsLoggedIn, setRole }) => {
   const [loading, setLoading] = useState(false);
 
   // Validation Schema for Formik
@@ -15,52 +16,90 @@ const LoginScreen = ({ navigation }) => {
   });
 
   // Handle Login
+
+  // const handleLogin = async (values) => {
+  //   const { email, password } = values;
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await axios.post('http://192.168.100.3:5001/api/login', {
+  //       email,
+  //       password,
+  //     });
+
+  //     // Log the response to see its structure
+  //     console.log('Response:', response.data);
+
+  //     // Correctly destructure the response
+  //     const { token, user } = response.data;
+
+  //     // Get role from user object
+  //     const { role } = user;
+  //     console.log("role",role)
+
+  //     // Store the token
+  //     await AsyncStorage.setItem('authToken', token);
+  //     // Navigate based on role
+  //     if (role === 'manager') {
+  //       navigation.navigate('AdminDashboard');
+  //       Alert.alert('Login Successful', 'Welcome Manager!');
+  //     } else if (role === 'attendee') {
+  //       console.log(navigation.getState());
+  //       navigation.navigate('ExploreMore');
+  //       Alert.alert('Login Successful', 'Welcome Customer!');
+  //     } else {
+  //       Alert.alert('Error', 'User role not recognized.');
+  //     }
+  //   } catch (error) {
+  //     // Detailed error handling
+  //     const errorMessage =
+  //       error.response?.data?.message ||
+  //       error.response?.data?.error ||
+  //       error.message ||
+  //       'Login failed. Please try again.';
+
+  //     console.error('Login error:', errorMessage);
+  //     Alert.alert('Login Failed', errorMessage);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleLogin = async (values) => {
-    const { email, password } = values;
     setLoading(true);
-
     try {
-      const response = await axios.post('http://192.168.100.4:5001/api/login', {
-        email,
-        password,
-      });
-
-      // Log the response to see its structure
-      console.log('Response:', response.data);
-
-      // Correctly destructure the response
+      const response = await axios.post('http://192.168.100.3:5001/api/login', values);
       const { token, user } = response.data;
-
-      // Get role from user object
-      const { role } = user;
-
-      // Store the token
-      await AsyncStorage.setItem('authToken', token);
-//  git remote add new origin https://github.com/miangmuteeb/New-Crave-Curve.git
-      // Navigate based on role
-      if (role === 'manager') {
-        navigation.navigate('SellerDashboardScreen');
-        Alert.alert('Login Successful', 'Welcome Manager!');
-      } else if (role === 'customer') {
-        navigation.navigate('AddEvent');
-        Alert.alert('Login Successful', 'Welcome Customer!');
+  
+      if (token && user.role) {
+        await AsyncStorage.setItem('authToken', token);
+        await AsyncStorage.setItem('userRole', user.role);
+  
+        setIsLoggedIn(true);
+        setRole(user.role);
+  
+        Alert.alert('Login Successful', `Welcome ${user.role === 'manager' ? 'Manager' : 'Customer'}!`);
+  
+        // Use setTimeout to ensure state updates before navigation reset
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: user.role === 'manager' ? 'AdminDashboard' : 'ExploreMore' }],
+          });
+        }, 100);
       } else {
-        Alert.alert('Error', 'User role not recognized.');
+        Alert.alert('Error', 'Invalid login response');
       }
     } catch (error) {
-      // Detailed error handling
-      const errorMessage =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        error.message ||
-        'Login failed. Please try again.';
-
-      console.error('Login error:', errorMessage);
+      const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
       Alert.alert('Login Failed', errorMessage);
+      console.log(error.message);  
     } finally {
       setLoading(false);
     }
   };
+  
+
 
   // Handle Forgot Password
   const handleForgotPassword = (email) => {
@@ -81,11 +120,11 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png' }} // Logo URL
+        source={{ uri: 'https://cdn.pixabay.com/photo/2016/11/23/15/48/audience-1853662_1280.jpg' }} // Logo URL
         style={styles.logo}
       />
       <ScrollView>
-        <Text style={styles.restaurantName}>Crave Curve</Text>
+        <Text style={styles.restaurantName}>Event Hub</Text>
 
         <Formik
           initialValues={{ email: '', password: '' }}
@@ -149,8 +188,8 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 150,
     alignSelf: 'center',
     marginBottom: 20,
   },
@@ -160,6 +199,7 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     textAlign: 'center',
     marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     height: 50,

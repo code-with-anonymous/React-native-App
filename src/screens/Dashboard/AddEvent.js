@@ -750,7 +750,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 
 // Constants
 const CATEGORIES = ['Sports', 'Music', 'Tech', 'Workshop', 'Meetup'];
-const API_URL = 'http://000.000.000.0:5001/api/createEvents';
+const API_URL = 'http://192.168.100.3:5001/api/createEvents';
 const IMAGE_PICKER_OPTIONS = {
   mediaType: 'photo',
   maxWidth: 300,
@@ -814,7 +814,7 @@ const AddEvent = () => {
   const handleDateChange = (event, selectedDate) => {
     updateUiState('isDatePickerVisible', false);
     if (selectedDate) {
-      const formattedDate = format(selectedDate, 'yyyy-MM-dd'); // Formatting with date-fns
+      const formattedDate = format(selectedDate, "yyyy-MM-dd") // Formatting with date-fns
       updateField('eventDate', formattedDate);
     }  
   };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,34 +10,42 @@ import {
   ScrollView,
 } from 'react-native';
 import axios from 'axios';
-import { Formik } from 'formik';
+import {Formik} from 'formik';
 import * as Yup from 'yup';
 
-const RegisterScreen = ({ navigation }) => {
+const RegisterScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   // Validation Schema for Formik
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email format').required('Email is required'),
-    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Confirm password is required'),
+    name: Yup.string()
+      .required('Name is required')
+      .min(3, 'Name must be at least 3 characters'),
+    email: Yup.string()
+      .email('Invalid email format')
+      .required('Email is required'),
+    password: Yup.string()
+      .min(6, 'Password must be at least 6 characters')
+      .required('Password is required'),
   });
 
   // Handle User Registration with MongoDB
-  const handleRegister = async (values) => {
-    const { email, password } = values;
+  const handleRegister = async values => {
+    const {name, email, password} = values;
     setLoading(true);
     try {
       // Send the registration data to the backend (MongoDB)
-      const response = await axios.post('http://192.168.100.4:5001/api/register', {
-        email,
-        password,
-        role,
-      });
+      const response = await axios.post(
+        'http://192.168.100.3:5001/api/register',
+        {
+          name,
+          email,
+          password,
+          role,
+        },
+      );
 
       console.log(response.data.message); // Registration success message
 
@@ -48,13 +56,13 @@ const RegisterScreen = ({ navigation }) => {
       setTimeout(() => {
         navigation.navigate('LoginScreen');
       }, 2000); // Wait for 2 seconds before navigating
-    }catch (error) {
-        console.error('error:', {
-          message: error.message,
-          request: error.request,
-          response: error.response,
-          config: error.config
-        });
+    } catch (error) {
+      console.error('error:', {
+        message: error.message,
+        request: error.request,
+        response: error.response,
+        config: error.config,
+      });
     }
     setLoading(false);
   };
@@ -62,19 +70,41 @@ const RegisterScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png' }} // Logo URL
+        source={{
+          uri: 'https://cdn.pixabay.com/photo/2016/11/23/15/48/audience-1853662_1280.jpg',
+        }} // Logo URL
         style={styles.logo}
       />
       <ScrollView>
-        <Text style={styles.restaurantName}>Crave Curve</Text>
+        <Text style={styles.restaurantName}>Event Hub</Text>
 
         <Formik
-          initialValues={{ email: '', password: '', confirmPassword: '' }}
+          initialValues={{name: '', email: '', password: ''}}
           validationSchema={validationSchema}
-          onSubmit={(values) => handleRegister(values)}
-        >
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          onSubmit={values => handleRegister(values)}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <>
+              {/* Name Input */}
+              <TextInput
+                style={styles.input}
+                placeholder="Name"
+                placeholderTextColor="#aaa"
+                autoCapitalize="words"
+                onChangeText={handleChange('name')}
+                onBlur={handleBlur('name')}
+                value={values.name}
+              />
+              {touched.name && errors.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
+
               {/* Email Input */}
               <TextInput
                 style={styles.input}
@@ -86,7 +116,9 @@ const RegisterScreen = ({ navigation }) => {
                 onBlur={handleBlur('email')}
                 value={values.email}
               />
-              {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+              {touched.email && errors.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
 
               {/* Password Input */}
               <TextInput
@@ -98,55 +130,57 @@ const RegisterScreen = ({ navigation }) => {
                 onBlur={handleBlur('password')}
                 value={values.password}
               />
-              {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-
-              {/* Confirm Password Input */}
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm Password"
-                placeholderTextColor="#aaa"
-                secureTextEntry
-                onChangeText={handleChange('confirmPassword')}
-                onBlur={handleBlur('confirmPassword')}
-                value={values.confirmPassword}
-              />
-              {touched.confirmPassword && errors.confirmPassword && (
-                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+              {touched.password && errors.password && (
+                <Text style={styles.errorText}>{errors.password}</Text>
               )}
 
               {/* Role Selection (Radio Buttons) */}
               <Text style={styles.label}>Select your role:</Text>
               <View style={styles.roleContainer}>
                 <TouchableOpacity
-                  style={[styles.radioButton, role === 'customer' && styles.selectedRadio]}
-                  onPress={() => setRole('customer')}
-                >
-                  <Text style={styles.radioText}>Customer</Text>
+                  style={[
+                    styles.radioButton,
+                    role === 'attendee' && styles.selectedRadio,
+                  ]}
+                  onPress={() => setRole('attendee')}>
+                  <Text style={styles.radioText}>Attendee</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.radioButton, role === 'manager' && styles.selectedRadio]}
-                  onPress={() => setRole('manager')}
-                >
+                  style={[
+                    styles.radioButton,
+                    role === 'manager' && styles.selectedRadio,
+                  ]}
+                  onPress={() => setRole('manager')}>
                   <Text style={styles.radioText}>Manager</Text>
                 </TouchableOpacity>
               </View>
-              {!role && <Text style={styles.errorText}>Please select a role</Text>}
+              {!role && (
+                <Text style={styles.errorText}>Please select a role</Text>
+              )}
 
               {/* Loading Indicator or Register Button */}
               {loading ? (
                 <ActivityIndicator size="large" color="#000" />
               ) : (
                 <TouchableOpacity
-                  style={[styles.button, { backgroundColor: role === 'Customer' ? '#4CAF50' : '#FF6347' }]} // Button color based on role
-                  onPress={handleSubmit}
-                >
+                  style={[
+                    styles.button,
+                    {
+                      backgroundColor:
+                        role === 'attendee' ? '#4CAF50' : '#FF6347',
+                    },
+                  ]} // Button color based on role
+                  onPress={handleSubmit}>
                   <Text style={styles.buttonText}>Register</Text>
                 </TouchableOpacity>
               )}
 
               {/* Navigate to Login */}
-              <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-                <Text style={styles.loginText}>Already have an account? Login here</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('LoginScreen')}>
+                <Text style={styles.loginText}>
+                  Already have an account? Login here
+                </Text>
               </TouchableOpacity>
             </>
           )}
@@ -155,13 +189,18 @@ const RegisterScreen = ({ navigation }) => {
         {/* Success Message */}
         {registrationSuccess && (
           <View style={styles.successMessage}>
-            <Text style={styles.successText}>Registration Successful, Welcome {role}!</Text>
+            <Text style={styles.successText}>
+              Registration Successful, Welcome {role}!
+            </Text>
           </View>
         )}
       </ScrollView>
     </View>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -172,8 +211,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 200,
+    height: 150,
     marginBottom: 20,
   },
   restaurantName: {
@@ -181,6 +220,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 40,
+    textAlign: 'center',
   },
   input: {
     width: '100%',
@@ -257,6 +297,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
 
 export default RegisterScreen;

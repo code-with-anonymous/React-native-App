@@ -5,43 +5,46 @@
   
   // Register function
   const register = async (req, res) => {
-    try {
-      const { email, password, role } = req.body;
+      try {
+        const { name, email, password, role } = req.body;
   
-      // Validate role (it must be 'customer' or 'manager')
-      if (!['customer', 'manager'].includes(role)) {
-        return res.status(400).json({ 
-          message: "Invalid role. Role must be either 'customer' or 'manager'" 
+        // Check if all fields are provided
+        if (!name || !email || !password || !role) {
+          return res.status(400).json({ message: "All fields are required" });
+        }
+  
+        // Check if user already exists
+        const existingUser = await userModel.findOne({ email });
+        if (existingUser) {
+          return res.status(400).json({ message: "Email already registered" });
+        }
+  
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+  
+        // Create the user
+        const newUser = await userModel.create({
+          name,
+          email,
+          password: hashedPassword,
+          role,
         });
+  
+        res.status(201).json({
+          message: "User registered successfully",
+          user: {
+            id: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
       }
-  
-      // Check for existing user
-      const existingUser = await userModel.findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({ message: "User already exists" });
-      }
-  
-      // Hash the password
-      const hashPassword = await bcrypt.hash(password, 10);
-  
-      // Create new user
-      const newUser = new userModel({ email, password: hashPassword, role });
-      await newUser.save();
-  
-      res.status(200).json({
-        success: true,
-        msg: "User registered successfully",
-        user: {
-          id: newUser._id,
-          email: newUser.email,
-          role: newUser.role,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error", error: error.message });
     }
-  };
+  
   
   // Login function
   const login = async (req, res) => {
@@ -74,7 +77,7 @@
           role: registeredUser.role 
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '3h' }
       );
   
       console.log('token', token);
@@ -107,37 +110,67 @@
     }
   };
 
-  const verifyToken = async (req, res) => {
-    const { token } = req.body;
-    console.log(token)
+ 
+  // const logout = (req, res) => {
+  //   res.clearCookie('authToken', {
+  //     httpOnly: true,
+  //     secure: false,
+  //     sameSite: 'strict',
+  //   });
+  //   console.log('User logged out successfully', req.session);
   
-    if (!token) {
-      return res.status(400).json({ isValid: false, message: 'No token provided' });
-    }
+  //   res.status(200).json({
+  //     success: true,
+  //     message: "User logged out successfully",
+  //   });
+  // };
   
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ isValid: false, message: 'Invalid token' });
-      }
-      res.json({ isValid: true, user: decoded });
-    });
-  };
-  
+
+
   // Middleware for authentication
-  const authenticate = (req, res, next) => {
-    const token = req.cookies.authToken;
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
+
+
+
+  const logout = (req, res) => {
+    if (!req.cookies || !req.cookies.authToken) {
+        return res.status(400).json({ success: false, message: "No auth token found" });
     }
+
+    res.clearCookie('authToken', {
+        httpOnly: true,
+        secure: false, // Change to `true` if using HTTPS
+        sameSite: 'strict',
+    });
+
+    console.log('User logged out successfully');
+
+    res.status(200).json({
+        success: true,
+        message: "User logged out successfully",
+    });
+};
+
+
+
+
+  const verifyToken = async (req, res) => {
+  const { token } = req.body;
+  console.log(token);
+
+  if (!token) {
+    return res.status(400).json({ isValid: false, message: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return res.json({ isValid: true, user: decoded }); // Ensure `decoded` contains `role`
+  } catch (err) {
+    return res.status(401).json({ isValid: false, message: 'Invalid token' });
+  }
+};
+
   
-    try {
-      const user = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = user;
-      next();
-    } catch (error) {
-      res.status(401).json({ message: "Invalid token" });
-    }
-  };
+ 
   
   // Middleware to check user role
   const authorizeRole = (roles) => {
@@ -150,5 +183,29 @@
       next();
     };
   };
+
+
+const getUser = (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Extract token
+
+  if (!token) {
+    return res.status(401).json({ message: "Authorization token is missing" });
+  }
+
+  try {
+    // Verify and decode the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Your JWT secret here
+    const userId = decoded.id; // Ensure 'id' is the correct field in your token
+
+    console.log("userId =>", userId); // Check the extracted userId
+
+    // Proceed with further logic (e.g., fetching user data from the database)
+    res.status(200).json({ message: 'User fetched successfully', userId });
+
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+};  
   
-  module.exports = { register, login, authenticate, authorizeRole , verifyToken};
+  module.exports = { register, login, logout, authorizeRole , verifyToken,getUser};

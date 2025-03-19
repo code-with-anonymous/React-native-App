@@ -1,12 +1,31 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // user authentication
-
 const getToken = async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
+      const token = await AsyncStorage.getItem("authToken");
       return token;
     } catch (error) {
-      console.error('Error retrieving token:', error);
+      console.error("Error retrieving token:", error);
       return null;
+    }
+  };
+  const fetchUserData = async () => {
+    const token = await getToken(); // Fetch token here
+    if (!token) {
+      Alert.alert("Error", "User is not authenticated.");
+      return;
+    }
+
+    try {
+      const response = await axios.get("http://192.168.100.3:5001/api/user", {
+        headers: {
+          Authorization: `Bearer ${token}`, // Use the token for Authorization
+        },
+      });
+      setUser(response.data);
+      console.log(response.data) // Store the user data in state
+    } catch (error) {
+      console.error("Error fetching user data:", error);
     }
   };
 
@@ -20,4 +39,6 @@ const getToken = async () => {
     }
   };
 
-module.exports ={getToken,verifyToken}
+  module.exports ={getToken,verifyToken,fetchUserData}
+
+

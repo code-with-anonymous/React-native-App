@@ -1,36 +1,56 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+// import React from 'react';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createStackNavigator } from '@react-navigation/stack';
 
-//Explore MoreScreen
-// import ExploreMoreScreen from '../screens/Explore/ExploreMoreScreen.js';
+// // Auth Screens
+// import LoginScreen from '../screens/Auth/LoginScreen';
+// import RegisterScreen from '../screens/Auth/RegisterScreen';
 
-// Auth Screens
-import LoginScreen from '../screens/Auth/LoginScreen';
-import RegisterScreen from '../screens/Auth/RegisterScreen';
-import AddEvent from '../screens/Frontend/AddEvent';
-import GetEvent from '../screens/Frontend/GetEvent';
-import ExploreMoreScreen from '../screens/Explore/ExploreMoreScreen';
+// // Explore & Events Screens
+// import ExploreMoreScreen from '../screens/Explore/ExploreMoreScreen';
+// import EventsList from '../screens/Frontend/EventList';
+// import EnrolledEventsScreen from '../components/EnrolledEvents';
+// import EventDetails from '../screens/Frontend/singleEventPage';
+// import ProfileScreen from '../screens/Frontend/Profile';
 
+// // Admin Screens
+// import AdminDashboard from '../screens/Dashboard/DahboardHome';
+// import AddEvent from '../screens/Dashboard/AddEvent';
+// import GetEvent from '../screens/Dashboard/GetEvent';
 
+// const Stack = createStackNavigator();
 
-const Stack = createStackNavigator();
+// const AppNavigator = ({ isLoggedIn, role }) => {
+//   return (
+//     <NavigationContainer>
+//       <Stack.Navigator screenOptions={{ headerShown: false }}>
+//         {isLoggedIn ? (
+//           role === 'admin' ? (
+//             <>
+//               <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
+//               <Stack.Screen name="AddEvent" component={AddEvent} />
+//               <Stack.Screen name="GetEvent" component={GetEvent} />
+//             </>
+//           ) : role === 'customer' ? (
+//             <>
+//               <Stack.Screen name="ExploreMore" component={ExploreMoreScreen} />
+//               <Stack.Screen name="EventsList" component={EventsList} />
+//               <Stack.Screen name="EnrolledEventsScreen" component={EnrolledEventsScreen} />
+//               <Stack.Screen name="SingleEventScreen" component={EventDetails} />
+//               <Stack.Screen name="UserProfileScreen" component={ProfileScreen} />
+//             </>
+//           ) : (
+//             <Stack.Screen name="ExploreMore" component={ExploreMoreScreen} />
+//           )
+//         ) : (
+//           <>
+//             <Stack.Screen name="LoginScreen" component={LoginScreen} />
+//             <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+//           </>
+//         )}
+//       </Stack.Navigator>
+//     </NavigationContainer>
+//   );
+// };
 
-const AppNavigator = () => {
-  return (
-  <Stack.Navigator screenOptions={{ headerShown: false }}> 
-       {/* Exolore More Screen */}
-   <Stack.Screen name="ExploreMore" component={ExploreMoreScreen} /> 
-           {/* Auth Screens */}
-     {/* <Stack.Screen name="RegisterScreen" component={RegisterScreen} />   */}
-     {/* <Stack.Screen name="LoginScreen" component={LoginScreen} />   */}
-         <Stack.Screen name="AddEvent" component={AddEvent} />         
-         <Stack.Screen name="GetEvent" component={GetEvent} />         
-  
-
-             
-     
-     </Stack.Navigator>
-  );
-};
-
-export default AppNavigator;
+// export default AppNavigator;

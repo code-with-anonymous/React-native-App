@@ -757,12 +757,7 @@
 
 // export default GetEvent;
 
-
-
-
-
-
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -780,7 +775,7 @@ import {
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const API_BASE_URL = 'http://192.168.100.4:5001/api';
+const API_BASE_URL = 'http://192.168.100.3:5001/api';
 const CATEGORIES = ['All', 'Sports', 'Music', 'Tech', 'Workshop', 'Meetup'];
 
 const GetEvent = () => {
@@ -806,7 +801,17 @@ const GetEvent = () => {
   });
 
   // Available dates for filters
-  const dates = [...new Set(events.map(event => event.eventDate))].sort();
+  const dates = [
+    ...new Set(
+      events.map(event =>
+        new Date(event.eventDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }),
+      ),
+    ),
+  ].sort();
 
   useEffect(() => {
     fetchEvents();
@@ -850,13 +855,14 @@ const GetEvent = () => {
     if (!selectedEvent) return;
 
     try {
-      await axios.put(`${API_BASE_URL}/updateEvents/${selectedEvent._id}`, editForm);
+      await axios.put(
+        `${API_BASE_URL}/updateEvents/${selectedEvent._id}`,
+        editForm,
+      );
 
       setEvents(prevEvents =>
         prevEvents.map(event =>
-          event._id === selectedEvent._id
-            ? { ...event, ...editForm }
-            : event
+          event._id === selectedEvent._id ? {...event, ...editForm} : event,
         ),
       );
 
@@ -890,7 +896,9 @@ const GetEvent = () => {
     }
 
     if (filterCategory && filterCategory !== 'All') {
-      updatedList = updatedList.filter(event => event.category === filterCategory);
+      updatedList = updatedList.filter(
+        event => event.category === filterCategory,
+      );
     }
 
     setFilteredEvents(updatedList);
@@ -902,42 +910,40 @@ const GetEvent = () => {
     setSearchQuery('');
   };
 
-  const renderEventCard = ({ item }) => (
+  const renderEventCard = ({item}) => (
     <View style={styles.eventCard}>
-      {/* Use item.imageUrl for rendering the image */}
       {item.imageUrl && (
-        <Image 
-          source={{ uri: item.imageUrl }} 
-          style={styles.eventImage} 
-          resizeMode="cover" 
+        <Image
+          source={{uri: item.imageUrl}}
+          style={styles.eventImage}
+          resizeMode="cover"
         />
       )}
       <View style={styles.eventContent}>
         <Text style={styles.eventName}>{item.eventName}</Text>
-        <Text style={styles.eventDate}>Date: {item.eventDate}</Text>
+        <Text style={styles.eventDate}>
+          Date: {new Date(item.eventDate).toDateString()}
+        </Text>
         <Text style={styles.eventCategory}>Category: {item.category}</Text>
         <Text style={styles.eventDescription} numberOfLines={3}>
           {item.description}
         </Text>
-  
+
         <View style={styles.actionButtons}>
-          <TouchableOpacity 
-            style={[styles.actionButton, styles.editButton]} 
-            onPress={() => handleEdit(item)}
-          >
+          <TouchableOpacity
+            style={[styles.actionButton, styles.editButton]}
+            onPress={() => handleEdit(item)}>
             <Text style={styles.actionButtonText}>Edit</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.actionButton, styles.deleteButton]} 
-            onPress={() => handleDelete(item._id)}
-          >
+          <TouchableOpacity
+            style={[styles.actionButton, styles.deleteButton]}
+            onPress={() => handleDelete(item._id)}>
             <Text style={styles.actionButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
-  
 
   const renderEditModal = () => (
     <Modal visible={modalVisible} animationType="slide" transparent>
@@ -945,13 +951,13 @@ const GetEvent = () => {
         <View style={styles.modalContent}>
           <ScrollView>
             <Text style={styles.modalTitle}>Edit Event</Text>
-            
+
             <View style={styles.formGroup}>
               <Text style={styles.label}>Event Name</Text>
               <TextInput
                 style={styles.input}
                 value={editForm.eventName}
-                onChangeText={(text) => handleEditFormChange('eventName', text)}
+                onChangeText={text => handleEditFormChange('eventName', text)}
                 placeholder="Event Name"
               />
             </View>
@@ -960,21 +966,33 @@ const GetEvent = () => {
               <Text style={styles.label}>Event Date</Text>
               <TouchableOpacity
                 style={styles.dateInput}
-                onPress={() => setIsDatePickerVisible(true)}
-              >
+                onPress={() => setIsDatePickerVisible(true)}>
                 <Text style={styles.dateText}>
-                  {editForm.eventDate || 'Select date'}
+                  {editForm.eventDate
+                    ? new Date(editForm.eventDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    : 'Select date'}
                 </Text>
               </TouchableOpacity>
               {isDatePickerVisible && (
                 <DateTimePicker
-                  value={editForm.eventDate ? new Date(editForm.eventDate) : new Date()}
+                  value={
+                    editForm.eventDate
+                      ? new Date(editForm.eventDate)
+                      : new Date()
+                  }
                   mode="date"
                   display="default"
                   onChange={(event, selectedDate) => {
                     setIsDatePickerVisible(false);
                     if (selectedDate) {
-                      handleEditFormChange('eventDate', selectedDate.toISOString().split('T')[0]);
+                      handleEditFormChange(
+                        'eventDate',
+                        selectedDate.toISOString().split('T')[0],
+                      );
                     }
                   }}
                 />
@@ -986,7 +1004,7 @@ const GetEvent = () => {
               <TextInput
                 style={[styles.input, styles.textArea]}
                 value={editForm.description}
-                onChangeText={(text) => handleEditFormChange('description', text)}
+                onChangeText={text => handleEditFormChange('description', text)}
                 placeholder="Description"
                 multiline
                 numberOfLines={4}
@@ -994,16 +1012,14 @@ const GetEvent = () => {
             </View>
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.modalButton, styles.saveButton]}
-                onPress={handleSave}
-              >
+                onPress={handleSave}>
                 <Text style={styles.modalButtonText}>Save Changes</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setModalVisible(false)}
-              >
+                onPress={() => setModalVisible(false)}>
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -1033,8 +1049,7 @@ const GetEvent = () => {
         <View style={styles.filterButtonsContainer}>
           <TouchableOpacity
             style={styles.filterButton}
-            onPress={() => setFilterModalVisible(true)}
-          >
+            onPress={() => setFilterModalVisible(true)}>
             <Text style={styles.buttonText}>Filters</Text>
           </TouchableOpacity>
           {(filterDate || filterCategory) && (
@@ -1054,7 +1069,9 @@ const GetEvent = () => {
           )}
           {filterCategory && (
             <View style={styles.filterTag}>
-              <Text style={styles.filterTagText}>Category: {filterCategory}</Text>
+              <Text style={styles.filterTagText}>
+                Category: {filterCategory}
+              </Text>
             </View>
           )}
         </View>
@@ -1094,10 +1111,13 @@ const GetEvent = () => {
                       filterDate === date && styles.filterOptionSelected,
                     ]}
                     onPress={() => setFilterDate(date)}>
-                    <Text style={[
-                      styles.filterOptionText,
-                      filterDate === date && styles.filterOptionTextSelected
-                    ]}>{date}</Text>
+                    <Text
+                      style={[
+                        styles.filterOptionText,
+                        filterDate === date && styles.filterOptionTextSelected,
+                      ]}>
+                      {date}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -1113,10 +1133,14 @@ const GetEvent = () => {
                     filterCategory === category && styles.filterOptionSelected,
                   ]}
                   onPress={() => setFilterCategory(category)}>
-                  <Text style={[
-                    styles.filterOptionText,
-                    filterCategory === category && styles.filterOptionTextSelected
-                  ]}>{category}</Text>
+                  <Text
+                    style={[
+                      styles.filterOptionText,
+                      filterCategory === category &&
+                        styles.filterOptionTextSelected,
+                    ]}>
+                    {category}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -1142,8 +1166,6 @@ const GetEvent = () => {
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   // Main Container Styles
@@ -1229,7 +1251,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 16,
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
@@ -1265,6 +1287,7 @@ const styles = StyleSheet.create({
     color: '#616161',
     lineHeight: 22,
     marginBottom: 16,
+    scrollY: 'auto',
   },
   actionButtons: {
     flexDirection: 'row',

@@ -3,17 +3,20 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cors = require("cors");
 const routes = require("./route/Router");
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 connectDB();
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
 
 // CORS configuration to allow the frontend from multiple origins
 app.use(cors({
     origin: [
-        "http://192.168.100.11:5001",  // Your mobile device IP address (if using mobile)
+        "http://192.168.100.7:5001",  // Your mobile device IP address (if using mobile)
         "http://localhost:5001",       // For local frontend testing
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
