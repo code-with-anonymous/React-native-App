@@ -1,79 +1,454 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🎉 Event Hub – Event Management Platform
 
-# Getting Started
+Event Hub is a **full-stack event management platform** built with **React Native, Node.js, Express, and MongoDB**. It provides a seamless experience for users to discover and enroll in events while giving administrators powerful tools to create, manage, and organize events.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+The platform supports **authentication, event enrollment, feedback, advanced filtering, user profiles, media uploads, and complete event CRUD operations**.
 
-## Step 1: Start the Metro Server
+---
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## 🚀 Features
 
-To start Metro, run the following command from the _root_ of your React Native project:
+### 👤 User Features
+
+* 🔐 **User Authentication**
+
+  * Secure Login & Signup
+  * JWT-based authentication
+  * Protected routes and API endpoints
+
+* 🎟️ **Event Enrollment**
+
+  * Browse available events
+  * Enroll in events
+  * View enrolled events from the user profile
+
+* 🔎 **Advanced Event Filtering**
+
+  * Filter events by category
+  * Filter events by date
+  * View:
+
+    * Past Events
+    * Today's Events
+    * Upcoming Events
+
+* ⭐ **Feedback System**
+
+  * Submit feedback for events
+  * Share event experiences
+
+* 👤 **User Profile**
+
+  * View and manage personal information
+  * Track enrolled events
+
+---
+
+## 🛠️ Admin Features
+
+Administrators have complete control over event management.
+
+### 📅 Event Management
+
+* Create new events
+* Update existing events
+* Delete events
+* View and manage all events
+* Filter events by category and date
+
+### 🖼️ Media Management
+
+* Upload event images
+* Image processing using **Multer**
+* Cloud-based image storage using **Cloudinary**
+
+---
+
+## 📱 Tech Stack
+
+### Frontend
+
+* **React Native**
+* JavaScript
+* REST APIs
+* Cross-platform mobile development
+
+### Backend
+
+* **Node.js**
+* **Express.js**
+* RESTful APIs
+* JWT Authentication
+
+### Database
+
+* **MongoDB**
+* MongoDB/Mongoose for data management
+
+### Media Storage
+
+* **Cloudinary**
+* **Multer**
+
+---
+
+## 🏗️ Project Architecture
+
+```text
+Event Hub
+│
+├── 📱 Mobile App
+│   └── React Native
+│
+├── 🖥️ Backend API
+│   ├── Node.js
+│   ├── Express.js
+│   ├── JWT Authentication
+│   └── REST APIs
+│
+├── 🗄️ Database
+│   └── MongoDB
+│
+└── ☁️ Media Storage
+    ├── Cloudinary
+    └── Multer
+```
+
+---
+
+## 🔐 Authentication
+
+Event Hub uses **JWT (JSON Web Token)** authentication to securely manage user sessions.
+
+Authentication includes:
+
+* User registration
+* User login
+* Token-based authentication
+* Protected API endpoints
+* Role-based access for administrative operations
+
+---
+
+## 🔄 Core Functionality
+
+### User Flow
+
+```text
+Signup / Login
+      ↓
+Browse Events
+      ↓
+Filter Events
+      ↓
+View Event Details
+      ↓
+Enroll in Event
+      ↓
+Attend Event
+      ↓
+Submit Feedback
+```
+
+### Admin Flow
+
+```text
+Admin Login
+     ↓
+Admin Dashboard
+     ↓
+Create / Manage Events
+     ↓
+Upload Event Image
+     ↓
+Cloudinary Storage
+     ↓
+Update / Delete Events
+```
+
+---
+
+## 🖼️ Media Upload Flow
+
+Event images are uploaded through the backend using **Multer** and stored on **Cloudinary**.
+
+```text
+React Native App
+       ↓
+Image Selection
+       ↓
+Multer
+       ↓
+Backend API
+       ↓
+Cloudinary
+       ↓
+Image URL
+       ↓
+MongoDB
+```
+
+---
+
+## 📂 Suggested Project Structure
+
+```text
+Event-Hub/
+│
+├── mobile/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── screens/
+│   │   ├── navigation/
+│   │   ├── services/
+│   │   └── utils/
+│   │
+│   ├── App.js
+│   └── package.json
+│
+├── backend/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── config/
+│   ├── uploads/
+│   ├── server.js
+│   └── package.json
+│
+└── README.md
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1. Clone the Repository
 
 ```bash
-# using npm
+git clone https://github.com/your-username/event-hub.git
+
+cd event-hub
+```
+
+---
+
+### 2. Setup Backend
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file:
+
+```env
+PORT=5000
+
+MONGO_URI=your_mongodb_connection_string
+
+JWT_SECRET=your_jwt_secret
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
+
+Start the backend server:
+
+```bash
+npm run dev
+```
+
+or:
+
+```bash
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Start your Application
+---
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+### 3. Setup React Native Application
 
-### For Android
+Open a new terminal:
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+cd mobile
+npm install
 ```
 
-### For iOS
+Start the React Native application:
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npx react-native start
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+Then run the application on Android:
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+npx react-native run-android
+```
 
-## Step 3: Modifying your App
+For iOS:
 
-Now that you have successfully run the app, let's modify it.
+```bash
+npx react-native run-ios
+```
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+> Make sure your React Native development environment is properly configured before running the application.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+---
 
-## Congratulations! :tada:
+## 🌐 API Overview
 
-You've successfully run and modified your React Native App. :partying_face:
+The backend provides RESTful APIs for managing authentication, events, users, enrollment, and feedback.
 
-### Now what?
+### Authentication
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+```text
+POST   /api/auth/register
+POST   /api/auth/login
+```
 
-# Troubleshooting
+### Events
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+```text
+GET    /api/events
+GET    /api/events/:id
+POST   /api/events
+PUT    /api/events/:id
+DELETE /api/events/:id
+```
 
-# Learn More
+### Enrollment
 
-To learn more about React Native, take a look at the following resources:
+```text
+POST   /api/events/:id/enroll
+GET    /api/users/enrolled-events
+```
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+### Feedback
+
+```text
+POST   /api/events/:id/feedback
+GET    /api/events/:id/feedback
+```
+
+> API routes may vary depending on the final backend implementation.
+
+---
+
+## 🔎 Event Filtering
+
+Users can efficiently discover events using multiple filtering options.
+
+### Category Filtering
+
+Examples:
+
+* Technology
+* Business
+* Sports
+* Education
+* Entertainment
+* Workshops
+
+### Date Filtering
+
+```text
+Past Events
+     ↓
+Today's Events
+     ↓
+Upcoming Events
+```
+
+This makes it easier for users to find relevant events based on their interests and availability.
+
+---
+
+## 🔒 Security
+
+Event Hub implements several security mechanisms, including:
+
+* JWT-based authentication
+* Protected API routes
+* Role-based authorization
+* Environment variables for sensitive credentials
+* Secure cloud media storage
+
+Sensitive credentials should **never be committed to GitHub**.
+
+---
+
+## 📸 Screenshots
+
+Add screenshots of your React Native application here:
+
+```text
+screenshots/
+├── login.png
+├── signup.png
+├── home.png
+├── event-details.png
+├── enrolled-events.png
+├── profile.png
+└── admin-events.png
+```
+
+Example:
+
+```markdown
+![Home Screen](screenshots/home.png)
+```
+
+---
+
+## 🎯 Project Goals
+
+The main goal of Event Hub is to simplify event discovery and management by providing:
+
+* A user-friendly mobile experience
+* Efficient event discovery
+* Simple event enrollment
+* Secure authentication
+* Centralized event management
+* Cloud-based media management
+* Scalable REST APIs
+
+---
+
+## 🔮 Future Improvements
+
+Potential future enhancements include:
+
+* 🔔 Push notifications for upcoming events
+* 📍 Location-based event discovery
+* 🗺️ Google Maps integration
+* 💳 Online event ticketing and payments
+* 📅 Calendar integration
+* 💬 Real-time event discussions
+* ❤️ Favorite/bookmark events
+* 📊 Advanced admin analytics
+* ⭐ Event ratings and reviews
+* 🔎 Search with keyword support
+
+---
+
+## 👨‍💻 Developer
+
+**Muhammad Rayyan**
+
+Full-Stack / React Native Developer
+
+---
+
+## ⭐ Support
+
+If you find this project useful, consider giving it a ⭐ on GitHub.
+
+---
+
+## 📄 License
+
+This project is developed for educational and portfolio purposes.
